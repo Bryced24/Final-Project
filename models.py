@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 class Event:
     def __init__(self, title, date, location, description):
         self.title = title

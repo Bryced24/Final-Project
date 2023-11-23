@@ -3,10 +3,10 @@ from pymongo.server_api import ServerApi
 from bson import ObjectId
 
 # MongoDB URI
-uri = "mongodb+srv://bryced24:Antmente0924@finalproject.vbnx9ih.mongodb.net/?retryWrites=true&w=majority"
+uri = "mongodb+srv://bryced24:Antmente0924@finalproject.vbnx9ih.mongodb.net/?retryWrites=true&w=majority"  # noqa: E501
 
 # Create a MongoClient
-client = MongoClient(uri, server_api=ServerApi('1'))
+client: MongoClient = MongoClient(uri, server_api=ServerApi('1'))
 
 # Database and Collection
 db = client.event_management
@@ -19,6 +19,7 @@ try:
 except Exception as e:
     print(e)
 
+
 def add_event(event):
     try:
         event_data = event.to_dict()
@@ -27,20 +28,23 @@ def add_event(event):
     except Exception as e:
         return f"Error adding event: {e}"
 
+
 def get_all_events():
     try:
         return list(events_collection.find({}))
     except Exception as e:
         return f"Error retrieving events: {e}"
 
+
 def update_event(event_id, update_data):
     try:
-        result = events_collection.update_one({"_id": ObjectId(event_id)}, {"$set": update_data})
+        result = events_collection.update_one({"_id": ObjectId(event_id)}, {"$set": update_data})  # noqa: E501
         if result.matched_count == 0:
             return "No event found with the given ID."
         return "Event updated successfully."
     except Exception as e:
         return f"Error updating event: {e}"
+
 
 def delete_event(event_id):
     try:
