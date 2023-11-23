@@ -1,1 +1,1 @@
-# Final-Project
+# Event Management System
