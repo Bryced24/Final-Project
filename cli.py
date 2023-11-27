@@ -33,7 +33,7 @@ def get_max_column_widths(events, padding=2, max_desc_length=50):
 
 def interactive_cli():
     while True:
-        console.print(Markdown("# 📅 Event Management System"), justify="center")
+        console.print(Markdown("# 📅 Event Management System"), justify="center")  # noqa: E501
         menu_options = [
             "[bold blue]1. Add Event[/bold blue]",
             "[bold blue]2. List Events[/bold blue]",
@@ -59,7 +59,7 @@ def interactive_cli():
         elif choice == 2:
             events = get_all_events()
             if isinstance(events, str) or not events:
-                console.print("No events found." if not events else events, style="red")
+                console.print("No events found." if not events else events, style="red")  # noqa: E501
             else:
                 table = Table(show_header=True, header_style="bold magenta")
                 table.add_column("ID", justify="center")
