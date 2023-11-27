@@ -1,6 +1,8 @@
 import click
 from rich.console import Console
 from rich.table import Table
+from rich.markdown import Markdown
+from rich.columns import Columns
 from db import add_event, get_all_events, update_event, delete_event
 from models import Event
 
@@ -31,8 +33,15 @@ def get_max_column_widths(events, padding=2, max_desc_length=50):
 
 def interactive_cli():
     while True:
-        console.print("\n[bold magenta]Event Management System[/bold magenta]", justify="left")     # noqa: E501
-        console.print("[1] Add Event\n[2] List Events\n[3] Update Event\n[4] Delete Event\n[5] Exit", style="bold blue")        # noqa: E501
+        console.print(Markdown("# 📅 Event Management System"), justify="center")
+        menu_options = [
+            "[bold blue]1. Add Event[/bold blue]",
+            "[bold blue]2. List Events[/bold blue]",
+            "[bold blue]3. Update Event[/bold blue]",
+            "[bold blue]4. Delete Event[/bold blue]",
+            "[bold blue]5. Exit[/bold blue]"
+        ]
+        console.print(Columns(menu_options, equal=True, expand=True))
         choice = click.prompt("\nChoose an option", type=int)
 
         if choice == 1:
@@ -50,14 +59,14 @@ def interactive_cli():
         elif choice == 2:
             events = get_all_events()
             if isinstance(events, str) or not events:
-                console.print("No events found." if not events else events, style="red")        # noqa: E501
+                console.print("No events found." if not events else events, style="red")
             else:
-                table = Table(show_header=True, header_style="bold green")
-                table.add_column("ID", justify="left")
-                table.add_column("Title")
-                table.add_column("Location")
-                table.add_column("Date")
-                table.add_column("Description")
+                table = Table(show_header=True, header_style="bold magenta")
+                table.add_column("ID", justify="center")
+                table.add_column("Title", justify="center")
+                table.add_column("Location", justify="center")
+                table.add_column("Date", justify="center")
+                table.add_column("Description", justify="center")
 
                 for event in events:
                     if len(event['description']) > 50:
