@@ -1,6 +1,10 @@
 import click
+from rich.console import Console
+from rich.table import Table
 from db import add_event, get_all_events, update_event, delete_event
 from models import Event
+
+console = Console()
 
 
 def get_max_column_widths(events, padding=2, max_desc_length=50):
@@ -27,12 +31,8 @@ def get_max_column_widths(events, padding=2, max_desc_length=50):
 
 def interactive_cli():
     while True:
-        click.echo("\nEvent Management System")
-        click.echo("1: Add Event")
-        click.echo("2: List Events")
-        click.echo("3: Update Event")
-        click.echo("4: Delete Event")
-        click.echo("5: Exit")
+        console.print("\n[bold magenta]Event Management System[/bold magenta]", justify="left")     # noqa: E501
+        console.print("[1] Add Event\n[2] List Events\n[3] Update Event\n[4] Delete Event\n[5] Exit", style="bold blue")        # noqa: E501
         choice = click.prompt("\nChoose an option", type=int)
 
         if choice == 1:
@@ -50,37 +50,25 @@ def interactive_cli():
         elif choice == 2:
             events = get_all_events()
             if isinstance(events, str) or not events:
-                click.echo("No events found." if not events else events)
+                console.print("No events found." if not events else events, style="red")        # noqa: E501
             else:
-                max_widths = get_max_column_widths(events)
-                header_format = (
-                    "{:<" + str(max_widths['_id']) + "} {:<" +
-                    str(max_widths['title']) + "} {:<" +
-                    str(max_widths['location']) + "} {:<" +
-                    str(max_widths['date']) + "} {:<" +
-                    str(max_widths['description']) + "}"
-                )
-                row_format = (
-                    "{:<" + str(max_widths['_id']) + "} {:<" +
-                    str(max_widths['title']) + "} {:<" +
-                    str(max_widths['location']) + "} {:<" +
-                    str(max_widths['date']) + "} {:<" +
-                    str(max_widths['description']) + "}"
-                )
-                click.echo(header_format.format(
-                    'ID', 'Title', 'Location', 'Date', 'Description'))
-                click.echo("-" * sum(max_widths.values()))
+                table = Table(show_header=True, header_style="bold green")
+                table.add_column("ID", justify="left")
+                table.add_column("Title")
+                table.add_column("Location")
+                table.add_column("Date")
+                table.add_column("Description")
 
                 for event in events:
-                    # Check if the description is longer than 50 characters
                     if len(event['description']) > 50:
                         truncated_desc = event['description'][:47] + '...'
                     else:
                         truncated_desc = event['description']
-                    click.echo(row_format.format(
+                    table.add_row(
                         str(event['_id']), event['title'], event['location'],
                         event['date'], truncated_desc
-                    ))
+                    )
+                console.print(table)
 
         elif choice == 3:
             events = get_all_events()
@@ -156,10 +144,10 @@ def interactive_cli():
                         click.echo("Deletion cancelled.")
 
         elif choice == 5:
-            click.echo("Exiting...")
+            console.print("Exiting...", style="bold yellow")
             break
         else:
-            click.echo("Invalid option, please choose again.")
+            console.print("Invalid option, please choose again.", style="bold red")     # noqa: E501
 
 
 if __name__ == '__main__':
