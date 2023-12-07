@@ -32,16 +32,17 @@ def get_max_column_widths(events, padding=2, max_desc_length=50):
 
 
 def interactive_cli():
+    console.print(Markdown("# 📅 Event Management System"), justify="center")
+    menu_options = [
+        "[bold blue]1. Add Event[/bold blue]",
+        "[bold blue]2. List Events[/bold blue]",
+        "[bold blue]3. Update Event[/bold blue]",
+        "[bold blue]4. Delete Event[/bold blue]",
+        "[bold blue]5. Exit[/bold blue]"
+    ]
+    console.print(Columns(menu_options, equal=True, expand=True))
+
     while True:
-        console.print(Markdown("# 📅 Event Management System"), justify="center")  # noqa: E501
-        menu_options = [
-            "[bold blue]1. Add Event[/bold blue]",
-            "[bold blue]2. List Events[/bold blue]",
-            "[bold blue]3. Update Event[/bold blue]",
-            "[bold blue]4. Delete Event[/bold blue]",
-            "[bold blue]5. Exit[/bold blue]"
-        ]
-        console.print(Columns(menu_options, equal=True, expand=True))
         choice = click.prompt("\nChoose an option", type=int)
 
         if choice == 1:
@@ -59,23 +60,18 @@ def interactive_cli():
         elif choice == 2:
             events = get_all_events()
             if isinstance(events, str) or not events:
-                console.print("No events found." if not events else events, style="red")  # noqa: E501
+                console.print("No events found." if not events else events, style="red")
             else:
-                table = Table(show_header=True, header_style="bold magenta")
-                table.add_column("ID", justify="center")
-                table.add_column("Title", justify="center")
-                table.add_column("Location", justify="center")
-                table.add_column("Date", justify="center")
-                table.add_column("Description", justify="center")
-
+                table = Table(show_header=True, header_style="bold magenta", show_lines=True)
+                table.add_column("ID", justify="left")
+                table.add_column("Title", justify="left")
+                table.add_column("Location", justify="left")
+                table.add_column("Date", justify="left")
+                table.add_column("Description", justify="left", no_wrap=False)
                 for event in events:
-                    if len(event['description']) > 50:
-                        truncated_desc = event['description'][:47] + '...'
-                    else:
-                        truncated_desc = event['description']
                     table.add_row(
                         str(event['_id']), event['title'], event['location'],
-                        event['date'], truncated_desc
+                        event['date'], event['description']
                     )
                 console.print(table)
 
@@ -136,7 +132,7 @@ def interactive_cli():
                 click.echo("\nSelect an event to delete:")
                 for idx, event in enumerate(events, start=1):
                     click.echo(
-                        f"{idx}: {event['title']} at {event['location']} on {event['date']}")  # noqa: E501
+                        f"{idx}: {event['title']} at {event['location']} on {event['date']}")
                 selected = click.prompt(
                     "Enter the number of the event to delete", type=int)
                 if selected < 1 or selected > len(events):
@@ -144,7 +140,7 @@ def interactive_cli():
                 else:
                     event_to_delete = events[selected - 1]
                     confirmation = click.confirm(
-                        f"Are you sure you want to delete the event: {event_to_delete['title']}?",  # noqa: E501
+                        f"Are you sure you want to delete the event: {event_to_delete['title']}?",
                         default=False)
                     if confirmation:
                         response = delete_event(str(event_to_delete['_id']))
@@ -156,7 +152,7 @@ def interactive_cli():
             console.print("Exiting...", style="bold yellow")
             break
         else:
-            console.print("Invalid option, please choose again.", style="bold red")     # noqa: E501
+            console.print("Invalid option, please choose again.", style="bold red")
 
 
 if __name__ == '__main__':

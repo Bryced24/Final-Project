@@ -6,7 +6,7 @@ tests:
 
 lint:
 	@echo Running linter...
-	flake8 . --exclude=venv
+	flake8 . --exclude=venv --ignore=E501
 
 type-check:
 	@echo Running type checker...
